@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { getCurrentDate } from './utils/getCurrentDate.js'
+import { getCurrentDate } from './getCurrentDate.js'
 export const writeDataToJson = (data, fileName) => {
 	const directoryPath = path.join('json', getCurrentDate())
 	if (!fs.existsSync(directoryPath)) {

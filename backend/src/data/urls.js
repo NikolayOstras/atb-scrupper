@@ -7,5 +7,5 @@ export const urls = {
 	meat: 'https://www.atbmarket.com/catalog/360-kovbasa-i-m-yasni-delikatesi',
 	sweet: 'https://www.atbmarket.com/catalog/299-konditers-ki-virobi',
 	chemisrty:
-		'https://www.atbmarket.com/catalog/,308-pobutova-khimiya-ta-neprodovol-chi-tovari',
+		'https://www.atbmarket.com/catalog/308-pobutova-khimiya-ta-neprodovol-chi-tovari',
 }
