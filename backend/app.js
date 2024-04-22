@@ -1,19 +1,20 @@
 import cors from 'cors'
 import express from 'express'
-import WebSocket from 'ws'
 import ATBParser from './src/ATBParser.js'
 import WebBrowser from './src/WebBrowser.js'
-import { urls } from './src/data/urls.js'
+import atbParsePageRouter from './src/routes/atb/atbParsePageRouter.js'
+import atbTotalPagesRouter from './src/routes/atb/atbTotalPagesRouter.js'
+import atbUrlsRouter from './src/routes/atb/atbUrlsRouter.js'
+import writeDataRouter from './src/routes/writeDataRouter.js'
 
 const browser = new WebBrowser()
 
 class Server {
 	constructor(browser) {
-		this.clients = new Set()
 		this.app = express()
 		this.server = null
-		this.wss = null
 		this.browser = browser
+		this.parser = new ATBParser(this.browser)
 	}
 
 	configureCors() {
@@ -36,63 +37,18 @@ class Server {
 		})
 	}
 
-	configureWebSocket() {
-		this.wss = new WebSocket.Server({ server: this.server })
-
-		this.wss.on('connection', ws => {
-			this.clients.add(ws)
-			console.log('New client connected')
-
-			ws.on('close', () => {
-				this.clients.delete(ws)
-				console.log('Client disconnected')
-			})
-		})
-	}
-
-	sendDataToClients(data) {
-		if (!this.clients) return
-		this.clients.forEach(client => {
-			if (client.readyState === WebSocket.OPEN) {
-				client.send(JSON.stringify(data))
-			}
-		})
-	}
-
 	configureRoutes() {
-		this.app.get('/atb/urls', (req, res) => {
-			res.json(urls)
-		})
-
-		this.app.post('/atb/parse', async (req, res) => {
-			const { categoryName } = req.body
-
-			if (!categoryName)
-				return res.status(400).json({ error: 'URL is missing .' })
-
-			try {
-				const parser = new ATBParser(
-					categoryName,
-					this.sendDataToClients,
-					this.browser
-				)
-				await parser.parseCategory()
-				return res.json({ message: 'Parsing completed successfully.' })
-			} catch (error) {
-				console.log(error)
-				return res
-					.status(500)
-					.json({ error: 'An error occurred during parsing.' })
-			}
-		})
+		this.app.use(writeDataRouter)
+		this.app.use(atbUrlsRouter)
+		this.app.use(atbTotalPagesRouter(this.parser))
+		this.app.use(atbParsePageRouter(this.parser))
 	}
 
 	async start(port) {
 		this.configureCors()
 		this.configureMiddlewares()
-		this.startServer(port)
-		this.configureWebSocket()
 		this.configureRoutes()
+		this.startServer(port)
 	}
 }
 
