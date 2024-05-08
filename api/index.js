@@ -20,10 +20,13 @@ app.use(
 		allowedHeaders: '*',
 	})
 )
+app.get('/', (req, res) => {
+	res.send('Hello World')
+})
 app.use(writeDataRouter)
 app.use(atbUrlsRouter)
 app.use(atbTotalPagesRouter(parser))
 app.use(atbParsePageRouter(parser))
 app.listen(3000, () => {
-	console.log(`Server is running on port 3000}`)
+	console.log(`Server is running on port 3000`)
 })
