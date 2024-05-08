@@ -1,3 +1,4 @@
+import chromium from '@sparticuz/chromium'
 import puppeteer from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 
@@ -10,7 +11,13 @@ class WebBrowser {
 	}
 
 	async launch() {
-		this.browser = await puppeteer.launch({ headless: false })
+		this.browser = await puppeteer.launch({
+			args: chromium.args,
+			defaultViewport: chromium.defaultViewport,
+			executablePath: await chromium.executablePath(),
+			headless: chromium.headless,
+			ignoreHTTPSErrors: true,
+		})
 		const pages = await this.browser.pages()
 		if (pages) {
 			this.page = pages[0]

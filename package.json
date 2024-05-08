@@ -15,11 +15,12 @@
 		"cheerio": "1.0.0-rc.12",
 		"cors": "^2.8.5",
 		"express": "^4.19.2",
-		"puppeteer": "^22.6.4",
+		"puppeteer-core": "^22.8.0",
 		"puppeteer-extra": "^3.3.6",
 		"puppeteer-extra-plugin-stealth": "^2.11.2"
 	},
 	"devDependencies": {
+		"@sparticuz/chromium": "123",
 		"nodemon": "^3.1.0"
 	}
 }
