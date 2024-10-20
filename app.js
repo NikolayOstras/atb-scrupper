@@ -1,5 +1,6 @@
 import cliProgress from 'cli-progress'
 import categoryTree from './src/categoryTree.js'
+import saveOrUpdateProducts from './src/firestore/saveOrUpdateProducts.js'
 import makeReq from './src/makeReq.js'
 import writeDataToCSV from './src/wiriteDataToCSV.js'
 
@@ -54,6 +55,7 @@ const main = async () => {
 	const elapsedTime = endTime - startTime // Calculate elapsed time
 	const elapsedSeconds = elapsedTime / 1000
 	console.log(`Time taken: ${elapsedSeconds.toFixed(2)} seconds`) // Log the time
+	await saveOrUpdateProducts(allData)
 }
 
 main()
