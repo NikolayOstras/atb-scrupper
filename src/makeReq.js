@@ -1,5 +1,13 @@
 import parsePage from './parsePage.js'
 
+/**
+ * Makes a request to a given URL and parses the HTML response.
+ *
+ * @param {string} url - The URL to make the request to.
+ * @returns {Promise<object[]>} A promise that resolves to an array of parsed data objects.
+ * @throws {Error} Throws an error if the request fails or the HTML parsing fails.
+ */
+
 const makeReq = async url => {
 	try {
 		// console.log(url)

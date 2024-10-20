@@ -4,6 +4,10 @@ import saveOrUpdateProducts from './src/firestore/saveOrUpdateProducts.js'
 import makeReq from './src/makeReq.js'
 import writeDataToCSV from './src/wiriteDataToCSV.js'
 
+/**
+ * Main function to scrape product data, save to CSV, and update Firestore.
+ */
+
 const main = async () => {
 	const startTime = Date.now() // Start time
 

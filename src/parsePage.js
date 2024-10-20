@@ -1,6 +1,13 @@
 import * as cheerio from 'cheerio'
 //todo - pagination
 
+/**
+ * Parses HTML content to extract product data.
+ *
+ * @param {string} html - The HTML content to parse.
+ * @returns {object[]} An array of objects, each representing a parsed product.
+ */
+
 const parsePage = html => {
 	// Pass HTML as an argument
 	const $ = cheerio.load(html) // Load the HTML into cheerio
