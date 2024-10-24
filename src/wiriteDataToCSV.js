@@ -10,7 +10,19 @@ import { parse } from 'json2csv'
  */
 const writeDataToCSV = async (filename, data) => {
 	try {
-		const csv = parse(data)
+		const csvData = []
+		for (const category in data) {
+			for (const subcategory in data[category]) {
+				for (const product of data[category][subcategory]) {
+					csvData.push({
+						category,
+						subcategory,
+						...product,
+					})
+				}
+			}
+		}
+		const csv = parse(csvData)
 		await fs.promises.writeFile(filename, csv)
 		console.log(`Data written to ${filename}`)
 	} catch (err) {

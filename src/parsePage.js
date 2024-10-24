@@ -19,7 +19,7 @@ const parsePage = html => {
 		const img = item.find('.catalog-item__img').attr('src')
 		const title = item.find('.catalog-item__title a').text().trim()
 		const link =
-			'https://www.atbmarket.com/' +
+			'https://www.atbmarket.com' +
 			item.find('.catalog-item__title a').attr('href')
 		const price = item.find('.product-price__top').attr('value')
 		parsedItems.push({ img, title, link, price })

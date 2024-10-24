@@ -1,5 +1,6 @@
-import cliProgress from 'cli-progress'
+import fs from 'fs'
 import categoryTree from './src/categoryTree.js'
+import findProductDifference from './src/findProductsDifference.js'
 import saveOrUpdateProducts from './src/firestore/saveOrUpdateProducts.js'
 import makeReq from './src/makeReq.js'
 import writeDataToCSV from './src/wiriteDataToCSV.js'
@@ -9,57 +10,54 @@ import writeDataToCSV from './src/wiriteDataToCSV.js'
  */
 
 const main = async () => {
-	const startTime = Date.now() // Start time
-
-	const allData = {}
-	const progressBar = new cliProgress.SingleBar(
-		{
-			format:
-				'Progress |{bar}| {percentage}% || {value}/{total} Requests || ETA: {eta}s',
-			clearOnComplete: true,
-			hideCursor: true,
-		},
-		cliProgress.Presets.shades_classic
-	)
-
-	const totalRequests = Object.values(categoryTree).reduce(
-		(acc, curr) => acc + Object.keys(curr).length,
-		0
-	)
-	let completedRequests = 0
-
-	progressBar.start(totalRequests, 0)
-
+	const startTime = Date.now()
+	const parsedData = {}
 	for (const category in categoryTree) {
-		allData[category] = {}
+		parsedData[category] = {}
 		for (const subcategory in categoryTree[category]) {
 			const url = categoryTree[category][subcategory]
-			allData[category][subcategory] = await makeReq(url)
-			completedRequests++
-			progressBar.update(completedRequests)
+			parsedData[category][subcategory] = await makeReq(url)
 		}
 	}
+	// save in csv to local usage
+	await writeDataToCSV('data.csv', parsedData)
 
-	progressBar.stop()
-	const csvData = []
-	for (const category in allData) {
-		for (const subcategory in allData[category]) {
-			for (const product of allData[category][subcategory]) {
-				csvData.push({
-					category,
-					subcategory,
-					...product,
-				})
-			}
-		}
+	// Compare the new data with the old data and find the difference
+	let difference = {}
+	if (fs.existsSync('data.old.json')) {
+		const oldData = JSON.parse(fs.readFileSync('data.old.json', 'utf-8'))
+		difference = findProductDifference(parsedData, oldData)
+		fs.writeFileSync('data.old.json', JSON.stringify(parsedData, null, 2))
+	} else {
+		const productsAmount = Object.values(parsedData).reduce(
+			(total, category) => {
+				return (
+					total +
+					Object.values(category).reduce((subTotal, subcategory) => {
+						return (
+							subTotal + (Array.isArray(subcategory) ? subcategory.length : 0)
+						)
+					}, 0)
+				)
+			},
+			0
+		)
+
+		console.log(
+			'No old data found. Creating a new one,parsed ' +
+				productsAmount +
+				' products'
+		)
+
+		difference = parsedData
+		fs.writeFileSync('data.old.json', JSON.stringify(parsedData, null, 2))
 	}
 
-	await writeDataToCSV('data.csv', csvData)
-	const endTime = Date.now() // End time
-	const elapsedTime = endTime - startTime // Calculate elapsed time
-	const elapsedSeconds = elapsedTime / 1000
-	console.log(`Time taken: ${elapsedSeconds.toFixed(2)} seconds`) // Log the time
-	await saveOrUpdateProducts(allData)
+	// Process the 'difference' object, e.g., update Firestore
+	saveOrUpdateProducts(difference)
+
+	const elapsedSeconds = (Date.now() - startTime) / 1000
+	console.log(`Time taken: ${elapsedSeconds.toFixed(2)} seconds`)
 }
 
 main()

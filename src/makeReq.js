@@ -27,15 +27,12 @@ const makeReq = async url => {
 				'sec-fetch-site': 'same-origin',
 				'sec-fetch-user': '?1',
 				'upgrade-insecure-requests': '1',
-
-				// Referer: 'https://www.atbmarket.com/catalog/287-ovochi-ta-frukti',
-				// 'Referrer-Policy': 'strict-origin-when-cross-origin',
 			},
 			body: null,
 			method: 'GET',
 		})
 
-		// console.log('Response received. Status:', response.status)
+		console.log(url + ' response received. Status:', response.status)
 		if (!response.ok) {
 			throw new Error(`HTTP error! Status: ${response.status}`)
 		}
