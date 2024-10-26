@@ -1,7 +1,7 @@
 import fs from 'fs'
 import categoryTree from './src/categoryTree.js'
 import findProductDifference from './src/findProductsDifference.js'
-import saveOrUpdateProducts from './src/firestore/saveOrUpdateProducts.js'
+import updateProducts from './src/firestore/updateProducts.js'
 import makeReq from './src/makeReq.js'
 import writeDataToCSV from './src/wiriteDataToCSV.js'
 
@@ -53,8 +53,7 @@ const main = async () => {
 		fs.writeFileSync('data.old.json', JSON.stringify(parsedData, null, 2))
 	}
 
-	// Process the 'difference' object, e.g., update Firestore
-	saveOrUpdateProducts(difference)
+	updateProducts(difference)
 
 	const elapsedSeconds = (Date.now() - startTime) / 1000
 	console.log(`Time taken: ${elapsedSeconds.toFixed(2)} seconds`)
