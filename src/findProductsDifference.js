@@ -39,7 +39,6 @@ const findProductDifference = (newData, oldData) => {
 			}
 		}
 	}
-	console.log(difference)
 	console.log(
 		`Found ${newProductsCount} new products and ${changedProductsCount} changed products`
 	)

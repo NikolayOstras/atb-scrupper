@@ -1,7 +1,10 @@
 import fs from 'fs'
 import categoryTree from './src/categoryTree.js'
 import findProductDifference from './src/findProductsDifference.js'
-import updateProducts from './src/firestore/updateProducts.js'
+import updateProducts, {
+	getOrCreateDocument,
+	updateSubCategoryCount,
+} from './src/firestore/updateProducts.js'
 import makeReq from './src/makeReq.js'
 import writeDataToCSV from './src/wiriteDataToCSV.js'
 
@@ -17,6 +20,23 @@ const main = async () => {
 		for (const subcategory in categoryTree[category]) {
 			const url = categoryTree[category][subcategory]
 			parsedData[category][subcategory] = await makeReq(url)
+
+			console.log('Start update amount of products in firestore')
+
+			// update product counter in firestore
+			const categoryRef = await getOrCreateDocument('categories', {
+				title: category,
+			})
+			const subCategoryRef = await getOrCreateDocument('subcategories', {
+				title: subcategory,
+				category: categoryRef,
+			})
+
+			// Update the subcategory count
+			await updateSubCategoryCount(
+				subCategoryRef,
+				parsedData[category][subcategory].length
+			)
 		}
 	}
 	// save in csv to local usage

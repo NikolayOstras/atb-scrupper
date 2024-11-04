@@ -10,8 +10,6 @@ import parsePage from './parsePage.js'
 
 const makeReq = async url => {
 	try {
-		// console.log(url)
-		// console.log('Fetching data from ATB Market...')
 		const response = await fetch(url, {
 			headers: {
 				accept:
@@ -37,9 +35,7 @@ const makeReq = async url => {
 			throw new Error(`HTTP error! Status: ${response.status}`)
 		}
 		const html = await response.text()
-		// console.log('Parsing HTML...')
 		const parsedData = parsePage(html)
-		// console.log('Parsing complete.')
 
 		return parsedData
 	} catch (error) {

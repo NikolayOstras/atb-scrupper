@@ -11,8 +11,6 @@ import { db } from './firebaseConfig.js'
 
 async function updateProducts(newProducts) {
 	for (const categoryName in newProducts) {
-		console.log(`Category: ${categoryName}`)
-
 		const categoryRef = await getOrCreateDocument('categories', {
 			title: categoryName,
 		})
@@ -24,7 +22,6 @@ async function updateProducts(newProducts) {
 			})
 
 			const products = newProducts[categoryName][subCategoryName]
-			await updateSubCategoryCount(subCategoryRef, products.length)
 
 			for (const product of products) {
 				await createOrUpdateProduct(product, categoryRef, subCategoryRef)
@@ -33,12 +30,12 @@ async function updateProducts(newProducts) {
 	}
 }
 
-async function updateSubCategoryCount(subCategoryRef, productCount) {
+export async function updateSubCategoryCount(subCategoryRef, productCount) {
 	await updateDoc(subCategoryRef, { amount: productCount })
 }
 
 // Generic function to get or create a document based on conditions
-async function getOrCreateDocument(collectionName, conditions) {
+export async function getOrCreateDocument(collectionName, conditions) {
 	const collectionRef = collection(db, collectionName)
 
 	// Filter out any undefined values from the conditions
@@ -100,8 +97,10 @@ async function createOrUpdateProduct(product, categoryRef, subCategoryRef) {
 		})
 
 		console.log(
-			`Updated product: ${product.title} - Price changed: ${
+			`Updated product: ${product.title}  ${
 				querySnapshot.docs[0].data().price !== product.price
+					? 'price changed'
+					: ''
 			}`
 		)
 	}
