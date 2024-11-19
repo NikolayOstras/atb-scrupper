@@ -5,7 +5,7 @@ import updateProducts, {
 	getOrCreateDocument,
 	updateSubCategoryCount,
 } from './src/firestore/updateProducts.js'
-import makeReq from './src/makeReq.js'
+import makeReq from './src/make-req/makeReq.js'
 import writeDataToCSV from './src/wiriteDataToCSV.js'
 
 /**

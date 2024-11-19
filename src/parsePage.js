@@ -24,7 +24,9 @@ const parsePage = html => {
 		const price = item.find('.product-price__top').attr('value')
 		parsedItems.push({ img, title, link, price })
 	})
+	const paginationItems = $('.product-pagination__list').children().length
+	const totalPages = paginationItems > 2 ? paginationItems - 2 : 1
 
-	return parsedItems // Return the parsed items
+	return { parsedItems, totalPages } // Return the parsed items
 }
 export default parsePage
